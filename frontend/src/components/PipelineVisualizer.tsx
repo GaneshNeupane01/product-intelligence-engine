@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Search, Globe, FileText, Ruler, GitCompareArrows, CheckCircle, XCircle } from "lucide-react";
+import { Search, Globe, FileText, Ruler, GitCompareArrows, Sparkles, CheckCircle, XCircle } from "lucide-react";
 import type { PipelineStep } from "@/types/search";
 
 interface PipelineVisualizerProps {
@@ -14,6 +14,7 @@ const steps = [
     { key: "parsing", label: "Extracting Data", icon: FileText },
     { key: "normalizing", label: "Normalizing Specs", icon: Ruler },
     { key: "comparing", label: "Comparing Prices", icon: GitCompareArrows },
+    { key: "recommending", label: "AI Insights", icon: Sparkles },
     { key: "completed", label: "Done", icon: CheckCircle },
 ];
 
@@ -24,6 +25,7 @@ const stepOrder = [
     "parsing",
     "normalizing",
     "comparing",
+    "recommending",
     "completed",
 ];
 

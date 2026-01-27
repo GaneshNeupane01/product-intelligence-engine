@@ -80,15 +80,39 @@ export interface ComparisonResult {
     compared_at: string;
 }
 
+export interface RecommendationData {
+    id: string;
+    data: {
+        summary?: string;
+        best_pick?: { seller: string; reason: string };
+        budget_pick?: { seller: string; reason: string };
+        insights?: string[];
+        warnings?: string[];
+        verdict?: string;
+        [key: string]: any;
+    };
+    recommended_at: string;
+}
+
 export interface SearchQuery {
     id: string;
     query: string;
     num_sites: number;
     provider: string;
-    status: "pending" | "searching" | "crawling" | "parsing" | "normalizing" | "comparing" | "completed" | "failed";
+    status:
+    | "pending"
+    | "searching"
+    | "crawling"
+    | "parsing"
+    | "normalizing"
+    | "comparing"
+    | "recommending"
+    | "completed"
+    | "failed";
     error_message: string | null;
     results: SearchResult[];
     comparison: ComparisonResult | null;
+    recommendation: RecommendationData | null;
     created_at: string;
     completed_at: string | null;
 }
@@ -108,5 +132,6 @@ export type PipelineStep =
     | "parsing"
     | "normalizing"
     | "comparing"
+    | "recommending"
     | "completed"
     | "failed";

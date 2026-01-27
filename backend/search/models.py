@@ -8,6 +8,7 @@ Phase 1 stores:
 
 Phase 3: NormalizedProduct
 Phase 4: ComparisonResult
+Phase 5: Recommendation
 """
 
 from django.db import models
@@ -29,6 +30,7 @@ class SearchQuery(models.Model):
             ("parsing", "Parsing"),
             ("normalizing", "Normalizing"),
             ("comparing", "Comparing"),
+            ("recommending", "Recommending"),
             ("completed", "Completed"),
             ("failed", "Failed"),
         ],
@@ -152,3 +154,21 @@ class ComparisonResult(models.Model):
 
     def __str__(self):
         return f"Comparison for '{self.search_query.query}'"
+
+
+class Recommendation(models.Model):
+    """Phase 5: AI-generated recommendation from comparison data."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    search_query = models.OneToOneField(
+        SearchQuery,
+        on_delete=models.CASCADE,
+        related_name="recommendation",
+    )
+    data = models.JSONField(default=dict)
+    recommended_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Recommendations"
+
+    def __str__(self):
+        return f"Recommendation for '{self.search_query.query}'"
