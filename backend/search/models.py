@@ -5,6 +5,8 @@ Phase 1 stores:
 - SearchQuery: the user's original search
 - SearchResult: each URL returned by the search provider
 - RawMarkdown: the extracted markdown content per result
+
+Phase 3: NormalizedProduct
 """
 
 from django.db import models
@@ -24,6 +26,7 @@ class SearchQuery(models.Model):
             ("searching", "Searching"),
             ("crawling", "Crawling"),
             ("parsing", "Parsing"),
+            ("normalizing", "Normalizing"),
             ("completed", "Completed"),
             ("failed", "Failed"),
         ],
@@ -98,11 +101,11 @@ class ParsedProduct(models.Model):
         on_delete=models.CASCADE,
         related_name="parsed_product",
     )
-    
+
     # Store the completely structured JSON dict
     data = models.JSONField(default=dict)
     error_message = models.TextField(blank=True, null=True)
-    
+
     parsed_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -111,3 +114,21 @@ class ParsedProduct(models.Model):
     def __str__(self):
         return f"Structured JSON for {self.search_result.url}"
 
+
+class NormalizedProduct(models.Model):
+    """Phase 3: Normalized specifications and price from ParsedProduct."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    parsed_product = models.OneToOneField(
+        ParsedProduct,
+        on_delete=models.CASCADE,
+        related_name="normalized",
+    )
+    normalized_specs = models.JSONField(default=dict)
+    normalized_price = models.JSONField(default=dict)
+    normalized_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Normalized products"
+
+    def __str__(self):
+        return f"Normalized specs for {self.parsed_product.search_result.url}"

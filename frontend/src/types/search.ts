@@ -9,11 +9,23 @@ export interface RawMarkdown {
     extracted_at: string;
 }
 
+export interface NormalizedProduct {
+    id: string;
+    normalized_specs: Record<string, string>;
+    normalized_price: {
+        amount: number | null;
+        currency: string;
+        original_amount: number | null;
+    };
+    normalized_at: string;
+}
+
 export interface ParsedProduct {
     id: string;
     data: Record<string, any>;
     error_message: string | null;
     parsed_at: string;
+    normalized: NormalizedProduct | null;
 }
 
 export interface SearchResult {
@@ -32,7 +44,7 @@ export interface SearchQuery {
     query: string;
     num_sites: number;
     provider: string;
-    status: "pending" | "searching" | "crawling" | "parsing" | "completed" | "failed";
+    status: "pending" | "searching" | "crawling" | "parsing" | "normalizing" | "completed" | "failed";
     error_message: string | null;
     results: SearchResult[];
     created_at: string;
@@ -52,5 +64,6 @@ export type PipelineStep =
     | "crawling"
     | "extracting"
     | "parsing"
+    | "normalizing"
     | "completed"
     | "failed";

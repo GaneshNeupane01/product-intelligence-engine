@@ -3,7 +3,7 @@ DRF Serializers for the search app.
 """
 
 from rest_framework import serializers
-from .models import SearchQuery, SearchResult, RawMarkdown, ParsedProduct
+from .models import SearchQuery, SearchResult, RawMarkdown, ParsedProduct, NormalizedProduct
 
 
 class RawMarkdownSerializer(serializers.ModelSerializer):
@@ -12,10 +12,18 @@ class RawMarkdownSerializer(serializers.ModelSerializer):
         fields = ["id", "content", "content_length", "extracted_at"]
 
 
+class NormalizedProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NormalizedProduct
+        fields = ["id", "normalized_specs", "normalized_price", "normalized_at"]
+
+
 class ParsedProductSerializer(serializers.ModelSerializer):
+    normalized = NormalizedProductSerializer(read_only=True)
+
     class Meta:
         model = ParsedProduct
-        fields = ["id", "data", "error_message", "parsed_at"]
+        fields = ["id", "data", "error_message", "parsed_at", "normalized"]
 
 
 class SearchResultSerializer(serializers.ModelSerializer):
