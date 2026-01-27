@@ -3,7 +3,7 @@ DRF Serializers for the search app.
 """
 
 from rest_framework import serializers
-from .models import SearchQuery, SearchResult, RawMarkdown, ParsedProduct, NormalizedProduct
+from .models import SearchQuery, SearchResult, RawMarkdown, ParsedProduct, NormalizedProduct, ComparisonResult
 
 
 class RawMarkdownSerializer(serializers.ModelSerializer):
@@ -44,8 +44,15 @@ class SearchResultSerializer(serializers.ModelSerializer):
         ]
 
 
+class ComparisonResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ComparisonResult
+        fields = ["id", "data", "compared_at"]
+
+
 class SearchQuerySerializer(serializers.ModelSerializer):
     results = SearchResultSerializer(many=True, read_only=True)
+    comparison = ComparisonResultSerializer(read_only=True)
 
     class Meta:
         model = SearchQuery
@@ -57,6 +64,7 @@ class SearchQuerySerializer(serializers.ModelSerializer):
             "status",
             "error_message",
             "results",
+            "comparison",
             "created_at",
             "completed_at",
         ]

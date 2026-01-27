@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Search, Globe, FileText, CheckCircle, XCircle } from "lucide-react";
+import { Search, Globe, FileText, Ruler, GitCompareArrows, CheckCircle, XCircle } from "lucide-react";
 import type { PipelineStep } from "@/types/search";
 
 interface PipelineVisualizerProps {
@@ -11,11 +11,21 @@ interface PipelineVisualizerProps {
 const steps = [
     { key: "searching", label: "Searching the Web", icon: Search },
     { key: "crawling", label: "Crawling Websites", icon: Globe },
-    { key: "parsing", label: "Parsing JSON Data", icon: FileText },
+    { key: "parsing", label: "Extracting Data", icon: FileText },
+    { key: "normalizing", label: "Normalizing Specs", icon: Ruler },
+    { key: "comparing", label: "Comparing Prices", icon: GitCompareArrows },
     { key: "completed", label: "Done", icon: CheckCircle },
 ];
 
-const stepOrder = ["submitting", "searching", "crawling", "parsing", "completed"];
+const stepOrder = [
+    "submitting",
+    "searching",
+    "crawling",
+    "parsing",
+    "normalizing",
+    "comparing",
+    "completed",
+];
 
 function getStepState(
     stepKey: string,

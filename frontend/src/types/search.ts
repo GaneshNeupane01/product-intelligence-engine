@@ -39,14 +39,56 @@ export interface SearchResult {
     created_at: string;
 }
 
+export interface ComparisonResult {
+    id: string;
+    data: {
+        product_name?: string;
+        total_sellers?: number;
+        price_comparison?: {
+            cheapest?: { seller: string; price: number; currency: string };
+            most_expensive?: { seller: string; price: number; currency: string } | null;
+            average_price?: number;
+            price_range?: string;
+        };
+        rating_comparison?: {
+            highest_rated?: { seller: string; score: number; count: number };
+            average_rating?: number;
+        };
+        availability_summary?: {
+            in_stock_count?: number;
+            out_of_stock_sellers?: string[];
+        };
+        shipping_comparison?: {
+            fastest?: { seller: string; timeframe: string };
+            free_shipping_sellers?: string[];
+        };
+        value_analysis?: {
+            best_value?: { seller: string; reason: string };
+            best_overall?: { seller: string; reason: string };
+        };
+        seller_details?: Array<{
+            seller: string;
+            domain: string;
+            price: number;
+            currency: string;
+            rating: number | null;
+            in_stock: boolean;
+            shipping: string;
+        }>;
+        [key: string]: any;
+    };
+    compared_at: string;
+}
+
 export interface SearchQuery {
     id: string;
     query: string;
     num_sites: number;
     provider: string;
-    status: "pending" | "searching" | "crawling" | "parsing" | "normalizing" | "completed" | "failed";
+    status: "pending" | "searching" | "crawling" | "parsing" | "normalizing" | "comparing" | "completed" | "failed";
     error_message: string | null;
     results: SearchResult[];
+    comparison: ComparisonResult | null;
     created_at: string;
     completed_at: string | null;
 }
@@ -65,5 +107,6 @@ export type PipelineStep =
     | "extracting"
     | "parsing"
     | "normalizing"
+    | "comparing"
     | "completed"
     | "failed";

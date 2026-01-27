@@ -7,6 +7,7 @@ Phase 1 stores:
 - RawMarkdown: the extracted markdown content per result
 
 Phase 3: NormalizedProduct
+Phase 4: ComparisonResult
 """
 
 from django.db import models
@@ -27,6 +28,7 @@ class SearchQuery(models.Model):
             ("crawling", "Crawling"),
             ("parsing", "Parsing"),
             ("normalizing", "Normalizing"),
+            ("comparing", "Comparing"),
             ("completed", "Completed"),
             ("failed", "Failed"),
         ],
@@ -132,3 +134,21 @@ class NormalizedProduct(models.Model):
 
     def __str__(self):
         return f"Normalized specs for {self.parsed_product.search_result.url}"
+
+
+class ComparisonResult(models.Model):
+    """Phase 4: Comparison matrix for all products in a SearchQuery."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    search_query = models.OneToOneField(
+        SearchQuery,
+        on_delete=models.CASCADE,
+        related_name="comparison",
+    )
+    data = models.JSONField(default=dict)
+    compared_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Comparison results"
+
+    def __str__(self):
+        return f"Comparison for '{self.search_query.query}'"
