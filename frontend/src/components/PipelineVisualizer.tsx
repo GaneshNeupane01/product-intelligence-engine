@@ -1,7 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Search, Globe, FileText, Ruler, GitCompareArrows, Sparkles, CheckCircle, XCircle } from "lucide-react";
+import {
+    Search,
+    Globe,
+    FileText,
+    Ruler,
+    GitCompareArrows,
+    Sparkles,
+    CheckCircle,
+    XCircle,
+} from "lucide-react";
 import type { PipelineStep } from "@/types/search";
 
 interface PipelineVisualizerProps {

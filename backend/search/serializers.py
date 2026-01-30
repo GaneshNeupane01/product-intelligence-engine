@@ -1,9 +1,12 @@
 """
-DRF Serializers for the search app.
+DRF Serializers for the search app (Phases 1-5).
 """
 
 from rest_framework import serializers
-from .models import SearchQuery, SearchResult, RawMarkdown, ParsedProduct, NormalizedProduct, ComparisonResult, Recommendation
+from .models import (
+    SearchQuery, SearchResult, RawMarkdown, ParsedProduct,
+    NormalizedProduct, ComparisonResult, Recommendation,
+)
 
 
 class RawMarkdownSerializer(serializers.ModelSerializer):

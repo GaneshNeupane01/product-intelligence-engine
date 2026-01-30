@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------
-   Types matching the Django REST API responses
+   Types matching the Django REST API responses (Phases 1-5)
    --------------------------------------------------------------- */
 
 export interface RawMarkdown {
@@ -128,7 +128,6 @@ export type PipelineStep =
     | "submitting"
     | "searching"
     | "crawling"
-    | "extracting"
     | "parsing"
     | "normalizing"
     | "comparing"

@@ -1,11 +1,8 @@
 """
 Database models for the search app.
 
-Phase 1 stores:
-- SearchQuery: the user's original search
-- SearchResult: each URL returned by the search provider
-- RawMarkdown: the extracted markdown content per result
-
+Phase 1: SearchQuery, SearchResult, RawMarkdown
+Phase 2: ParsedProduct
 Phase 3: NormalizedProduct
 Phase 4: ComparisonResult
 Phase 5: Recommendation
@@ -93,7 +90,7 @@ class RawMarkdown(models.Model):
 
 
 class ParsedProduct(models.Model):
-    """Structured JSON output extracted by the Parser Agent from RawMarkdown."""
+    """Phase 2: Structured JSON output extracted by the Parser Agent from RawMarkdown."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     search_result = models.OneToOneField(
         SearchResult,
@@ -105,11 +102,8 @@ class ParsedProduct(models.Model):
         on_delete=models.CASCADE,
         related_name="parsed_product",
     )
-
-    # Store the completely structured JSON dict
     data = models.JSONField(default=dict)
     error_message = models.TextField(blank=True, null=True)
-
     parsed_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -172,3 +166,5 @@ class Recommendation(models.Model):
 
     def __str__(self):
         return f"Recommendation for '{self.search_query.query}'"
+
+
