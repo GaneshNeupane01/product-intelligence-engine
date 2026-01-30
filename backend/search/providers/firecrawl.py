@@ -103,8 +103,11 @@ class FirecrawlSearchProvider(SearchProvider):
             "quora.com", "medium.com"
         ]
 
+        # Use natural search operators to push down exclusions to the search engine.
+        optimized_query = f"{query} " + " ".join([f"-site:{d}" for d in excluded_domains[:6]]) # limit operators to avoid query too long 
+
         search_payload = {
-            "query": query,
+            "query": optimized_query,
             "limit": search_limit,
             # Omitting scrapeOptions keeps it a fast metadata-only search
         }

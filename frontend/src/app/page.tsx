@@ -32,10 +32,16 @@ export default function HomePage() {
         return;
       }
 
-      // Animate through crawling → extracting → completed
+      // Animate through crawling → parsing → normalizing → comparing → recommending → completed
       setPipelineStep("crawling");
       await new Promise((r) => setTimeout(r, 400));
-      setPipelineStep("extracting");
+      setPipelineStep("parsing");
+      await new Promise((r) => setTimeout(r, 400));
+      setPipelineStep("normalizing");
+      await new Promise((r) => setTimeout(r, 400));
+      setPipelineStep("comparing");
+      await new Promise((r) => setTimeout(r, 400));
+      setPipelineStep("recommending");
       await new Promise((r) => setTimeout(r, 400));
       setPipelineStep("completed");
 
@@ -58,7 +64,7 @@ export default function HomePage() {
         </div>
         <div className="app-badge">
           <Zap size={12} style={{ display: "inline", marginRight: 4 }} />
-          Phase 1 — Live Search
+          Phase 5 — Full AI Pipeline
         </div>
       </header>
 

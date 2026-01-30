@@ -11,7 +11,7 @@ interface SearchBarProps {
 
 export default function SearchBar({ onSearch, isLoading }: SearchBarProps) {
     const [query, setQuery] = useState("");
-    const [numSites, setNumSites] = useState(5);
+    const [numSites, setNumSites] = useState(1);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
