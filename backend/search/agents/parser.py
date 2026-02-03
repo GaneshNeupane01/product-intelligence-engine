@@ -3,10 +3,10 @@ Phase 2: Parser Agent
 Extracts structured JSON from raw Markdown using an LLM.
 """
 
-import json
 import logging
 from typing import Dict, Any
 from ..providers.registry import get_llm_provider
+from ..providers.gemini import safe_json_parse
 
 logger = logging.getLogger(__name__)
 
@@ -66,26 +66,16 @@ class ParserAgent:
             return {}
 
         prompt = f"Source URL: {url}\n\nRAW MARKDOWN TO EXTRACT:\n{markdown_content}"
-        
+
         try:
             logger.info(f"ParserAgent running for URL: {url}")
             response_text = self.llm.generate(prompt=prompt, system_prompt=SYSTEM_PROMPT)
-            
-            # Defensive cleaning in case Gemini wraps the JSON in ```json blocks
-            cleaned = response_text.strip()
-            if cleaned.startswith("```json"):
-                cleaned = cleaned[7:]
-            if cleaned.endswith("```"):
-                cleaned = cleaned[:-3]
-            
-            structured_data = json.loads(cleaned.strip())
-            structured_data["source_url"] = url
+
+            structured_data = safe_json_parse(response_text, fallback={})
+            if structured_data:
+                structured_data["source_url"] = url
             return structured_data
 
-        except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse LLM JSON output: {e}\nRaw output: {response_text}")
-            return {}
         except Exception as e:
             logger.exception("Error in ParserAgent extraction.")
             return {}
-

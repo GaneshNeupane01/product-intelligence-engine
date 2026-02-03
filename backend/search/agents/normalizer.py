@@ -13,6 +13,7 @@ import json
 import logging
 from typing import Dict, Any, List
 from ..providers.registry import get_llm_provider
+from ..providers.gemini import safe_json_parse
 
 logger = logging.getLogger(__name__)
 
@@ -86,20 +87,11 @@ Raw Price Object:
             logger.info(f"NormalizerAgent running for: {title}")
             response_text = self.llm.generate(prompt=prompt, system_prompt=SYSTEM_PROMPT)
 
-            cleaned = response_text.strip()
-            if cleaned.startswith("```json"):
-                cleaned = cleaned[7:]
-            if cleaned.endswith("```"):
-                cleaned = cleaned[:-3]
-
-            result = json.loads(cleaned.strip())
+            result = safe_json_parse(response_text, fallback={})
             return {
                 "normalized_specs": result.get("normalized_specs", {}),
                 "normalized_price": result.get("normalized_price", {}),
             }
-        except json.JSONDecodeError as e:
-            logger.error(f"NormalizerAgent JSON parse error: {e}")
-            return {"normalized_specs": specs, "normalized_price": price}
         except Exception as e:
             logger.exception("NormalizerAgent failed")
             return {"normalized_specs": specs, "normalized_price": price}

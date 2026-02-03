@@ -9,6 +9,7 @@ import json
 import logging
 from typing import Dict, Any, List
 from ..providers.registry import get_llm_provider
+from ..providers.gemini import safe_json_parse
 
 logger = logging.getLogger(__name__)
 
@@ -111,17 +112,11 @@ class ComparisonEngine:
             logger.info(f"ComparisonEngine running for {len(normalized_products)} products")
             response_text = self.llm.generate(prompt=prompt, system_prompt=SYSTEM_PROMPT)
 
-            cleaned = response_text.strip()
-            if cleaned.startswith("```json"):
-                cleaned = cleaned[7:]
-            if cleaned.endswith("```"):
-                cleaned = cleaned[:-3]
+            return safe_json_parse(response_text, fallback={
+                "error": "Failed to parse comparison",
+                "raw_products": len(normalized_products),
+            })
 
-            return json.loads(cleaned.strip())
-
-        except json.JSONDecodeError as e:
-            logger.error(f"ComparisonEngine JSON parse error: {e}")
-            return {"error": "Failed to parse comparison", "raw_products": len(normalized_products)}
         except Exception as e:
             logger.exception("ComparisonEngine failed")
             return {"error": str(e)}

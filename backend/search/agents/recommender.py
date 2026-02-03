@@ -12,6 +12,7 @@ import json
 import logging
 from typing import Dict, Any
 from ..providers.registry import get_llm_provider
+from ..providers.gemini import safe_json_parse
 
 logger = logging.getLogger(__name__)
 
@@ -75,22 +76,13 @@ class RecommendationAgent:
             logger.info("RecommendationAgent generating insights")
             response_text = self.llm.generate(prompt=prompt, system_prompt=SYSTEM_PROMPT)
 
-            cleaned = response_text.strip()
-            if cleaned.startswith("```json"):
-                cleaned = cleaned[7:]
-            if cleaned.endswith("```"):
-                cleaned = cleaned[:-3]
-
-            return json.loads(cleaned.strip())
-
-        except json.JSONDecodeError as e:
-            logger.error(f"RecommendationAgent JSON parse error: {e}")
-            return {
+            return safe_json_parse(response_text, fallback={
                 "summary": "Recommendation generation encountered a parsing error.",
                 "insights": [],
                 "warnings": ["The AI output could not be parsed."],
                 "verdict": "Please try your search again.",
-            }
+            })
+
         except Exception as e:
             logger.exception("RecommendationAgent failed")
             return {
