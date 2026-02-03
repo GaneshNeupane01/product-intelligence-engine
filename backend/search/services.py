@@ -5,14 +5,14 @@ Pipeline:
   1. Create SearchQuery record
   2. Search provider → top N URLs
   3. Store SearchResult + RawMarkdown
-  4. Phase 2: Parser Agent → ParsedProduct (per result)
-  5. Phase 3: Normalizer Agent → NormalizedProduct (per result)
-  6. Phase 4: Comparison Engine → ComparisonResult (per query)
-  7. Phase 5: Recommendation Agent → Recommendation (per query)
-  8. Mark complete
+  4. Phase 2+3: Parse + Normalize in parallel (per result)
+  5. Phase 4: Comparison Engine → ComparisonResult (per query)
+  6. Phase 5: Recommendation Agent → Recommendation (per query)
+  7. Mark complete
 """
 
 import logging
+import concurrent.futures
 from django.utils import timezone
 
 from .models import (
@@ -22,6 +22,42 @@ from .models import (
 from .providers.registry import get_search_provider
 
 logger = logging.getLogger(__name__)
+
+
+def _parse_and_normalize(parser_agent, normalizer_agent, search_result, raw_md, item):
+    """
+    Run Phase 2 (parse) + Phase 3 (normalize) for a single search result.
+    Designed to be called concurrently via ThreadPoolExecutor.
+    """
+    if not parser_agent or not item.markdown:
+        return None
+
+    parsed_data = parser_agent.parse(item.markdown, item.url)
+    parsed_product = ParsedProduct.objects.create(
+        search_result=search_result,
+        raw_markdown=raw_md,
+        data=parsed_data,
+    )
+
+    if normalizer_agent and parsed_data:
+        norm_result = normalizer_agent.normalize(parsed_data)
+        NormalizedProduct.objects.create(
+            parsed_product=parsed_product,
+            normalized_specs=norm_result.get("normalized_specs", {}),
+            normalized_price=norm_result.get("normalized_price", {}),
+        )
+        return {
+            "title": parsed_data.get("title", ""),
+            "seller": parsed_data.get("seller", {}),
+            "normalized_specs": norm_result.get("normalized_specs", {}),
+            "normalized_price": norm_result.get("normalized_price", {}),
+            "rating": parsed_data.get("rating", {}),
+            "availability": parsed_data.get("availability", {}),
+            "shipping": parsed_data.get("shipping", {}),
+            "source_url": item.url,
+        }
+
+    return None
 
 
 def execute_search(query: str, num_sites: int = 5) -> SearchQuery:
@@ -68,8 +104,8 @@ def execute_search(query: str, num_sites: int = 5) -> SearchQuery:
         except ValueError:
             logger.warning("No LLM Provider active. Skipping AI pipeline.")
 
-        normalized_products = []
-
+        # Phase 1: Store all search results + raw markdown first (fast, no LLM)
+        result_pairs = []
         for idx, item in enumerate(response.results):
             search_result = SearchResult.objects.create(
                 search_query=search_query,
@@ -78,47 +114,35 @@ def execute_search(query: str, num_sites: int = 5) -> SearchQuery:
                 description=item.description or "",
                 position=idx + 1,
             )
-
             raw_md = RawMarkdown.objects.create(
                 search_result=search_result,
                 content=item.markdown or "",
             )
+            result_pairs.append((search_result, raw_md, item))
 
-            # Phase 2: Parse
-            if parser_agent and item.markdown:
-                search_query.status = "parsing"
-                search_query.save(update_fields=["status"])
+        # Phase 2+3: Parse and normalize all results in parallel
+        search_query.status = "parsing"
+        search_query.save(update_fields=["status"])
 
-                parsed_data = parser_agent.parse(item.markdown, item.url)
-                parsed_product = ParsedProduct.objects.create(
-                    search_result=search_result,
-                    raw_markdown=raw_md,
-                    data=parsed_data,
-                )
+        normalized_products = []
 
-                # Phase 3: Normalize
-                if normalizer_agent and parsed_data:
-                    search_query.status = "normalizing"
-                    search_query.save(update_fields=["status"])
-
-                    norm_result = normalizer_agent.normalize(parsed_data)
-                    NormalizedProduct.objects.create(
-                        parsed_product=parsed_product,
-                        normalized_specs=norm_result.get("normalized_specs", {}),
-                        normalized_price=norm_result.get("normalized_price", {}),
-                    )
-
-                    # Build the product view for comparison
-                    normalized_products.append({
-                        "title": parsed_data.get("title", ""),
-                        "seller": parsed_data.get("seller", {}),
-                        "normalized_specs": norm_result.get("normalized_specs", {}),
-                        "normalized_price": norm_result.get("normalized_price", {}),
-                        "rating": parsed_data.get("rating", {}),
-                        "availability": parsed_data.get("availability", {}),
-                        "shipping": parsed_data.get("shipping", {}),
-                        "source_url": item.url,
-                    })
+        if parser_agent:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=min(len(result_pairs), 5)) as executor:
+                futures = {
+                    executor.submit(
+                        _parse_and_normalize,
+                        parser_agent, normalizer_agent,
+                        sr, rm, it,
+                    ): it.url
+                    for sr, rm, it in result_pairs
+                }
+                for future in concurrent.futures.as_completed(futures):
+                    try:
+                        result = future.result()
+                        if result:
+                            normalized_products.append(result)
+                    except Exception as e:
+                        logger.error(f"Parse/normalize failed for {futures[future]}: {e}")
 
         # Phase 4: Compare (query-level, not per-result)
         if len(normalized_products) >= 1:
