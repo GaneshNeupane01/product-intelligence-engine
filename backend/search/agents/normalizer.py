@@ -41,9 +41,14 @@ ALSO PRODUCE a "normalized_price" object:
 {
   "amount": <number or null>,
   "currency": "<3-letter ISO code or original>",
-  "original_amount": <number or null>
+  "original_amount": <number or null>,
+  "usd_equivalent": <number or null>
 }
 - Parse price strings like "NPR 28,999" or "$599.99" or "Rs 1,08,000" into numeric amount + currency.
+- IMPORTANT: Always compute "usd_equivalent" — an approximate USD conversion using your
+  internal knowledge of current exchange rates. If the currency is already USD, set it
+  equal to "amount". If you cannot determine a reasonable approximation, set it to null.
+  This field enables accurate cross-currency comparisons in the next pipeline phase.
 
 OUTPUT FORMAT (JSON only):
 {
@@ -53,7 +58,8 @@ OUTPUT FORMAT (JSON only):
   "normalized_price": {
     "amount": 0,
     "currency": "",
-    "original_amount": null
+    "original_amount": null,
+    "usd_equivalent": 0
   }
 }
 """

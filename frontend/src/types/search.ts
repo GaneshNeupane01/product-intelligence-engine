@@ -16,6 +16,7 @@ export interface NormalizedProduct {
         amount: number | null;
         currency: string;
         original_amount: number | null;
+        usd_equivalent: number | null;
     };
     normalized_at: string;
 }
@@ -71,6 +72,7 @@ export interface ComparisonResult {
             domain: string;
             price: number;
             currency: string;
+            usd_equivalent: number | null;
             rating: number | null;
             in_stock: boolean;
             shipping: string;

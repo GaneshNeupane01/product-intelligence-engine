@@ -26,6 +26,10 @@ RULES:
 2. Identify winners in each category.
 3. Flag any missing data rather than guessing.
 4. All monetary comparisons must account for currency.
+5. Each product's normalized_price includes a "usd_equivalent" field. When comparing
+   prices across different currencies, use "usd_equivalent" as the common baseline
+   to determine the true cheapest option. Report the original price/currency alongside
+   the USD equivalent in your output.
 
 OUTPUT FORMAT:
 {
@@ -63,6 +67,7 @@ OUTPUT FORMAT:
       "domain": "",
       "price": 0,
       "currency": "",
+      "usd_equivalent": 0,
       "rating": null,
       "in_stock": true,
       "shipping": ""
@@ -127,6 +132,7 @@ class ComparisonEngine:
             "domain": product.get("seller", {}).get("domain", ""),
             "price": product.get("normalized_price", {}).get("amount", 0),
             "currency": product.get("normalized_price", {}).get("currency", ""),
+            "usd_equivalent": product.get("normalized_price", {}).get("usd_equivalent"),
             "rating": product.get("rating", {}).get("score"),
             "in_stock": product.get("availability", {}).get("in_stock", True),
             "shipping": product.get("shipping", {}).get("timeframe", ""),

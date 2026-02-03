@@ -126,6 +126,9 @@ export default function ComparisonPanel({ comparison }: ComparisonPanelProps) {
                                     </td>
                                     <td className="price-cell">
                                         {seller.currency} {seller.price?.toLocaleString() || "—"}
+                                        {seller.usd_equivalent && seller.currency !== "USD" && (
+                                            <span className="usd-approx">(~${seller.usd_equivalent.toLocaleString()})</span>
+                                        )}
                                     </td>
                                     <td>
                                         {seller.rating ? (
