@@ -29,6 +29,7 @@ RULES:
 4. If data is missing for some sellers, mention it as a caveat.
 5. Use a friendly, professional tone.
 6. Highlight deals, warnings, and trade-offs.
+7. Provide a "confidence_score" integer (1-10) indicating how confident you are in your "best pick" based on the data provided.
 
 OUTPUT FORMAT (JSON only):
 {
@@ -49,7 +50,8 @@ OUTPUT FORMAT (JSON only):
   "warnings": [
     "<warning if any>"
   ],
-  "verdict": "<final 2-3 sentence verdict>"
+  "verdict": "<final 2-3 sentence verdict>",
+  "confidence_score": <int 1-10>
 }
 """
 

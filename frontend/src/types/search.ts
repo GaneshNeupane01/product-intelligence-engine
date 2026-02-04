@@ -91,6 +91,7 @@ export interface RecommendationData {
         insights?: string[];
         warnings?: string[];
         verdict?: string;
+        confidence_score?: number;
         [key: string]: any;
     };
     recommended_at: string;

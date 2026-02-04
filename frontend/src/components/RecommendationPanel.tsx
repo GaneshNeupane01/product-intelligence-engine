@@ -27,6 +27,18 @@ export default function RecommendationPanel({
             <div className="recommendation-header">
                 <Sparkles size={24} className="text-primary" />
                 <h2>AI Shopping Insights</h2>
+                {data.confidence_score !== undefined && (
+                    <span
+                        className="ml-auto text-xs font-medium px-2 py-1 rounded"
+                        style={{
+                            background: data.confidence_score < 6 ? 'rgba(239, 68, 68, 0.1)' : 'rgba(34, 197, 94, 0.1)',
+                            color: data.confidence_score < 6 ? '#ef4444' : '#22c55e',
+                            border: `1px solid ${data.confidence_score < 6 ? 'rgba(239, 68, 68, 0.3)' : 'rgba(34, 197, 94, 0.3)'}`
+                        }}
+                    >
+                        {data.confidence_score < 6 && '⚠️ Low '}Confidence: {data.confidence_score}/10
+                    </span>
+                )}
             </div>
 
             <div className="recommendation-summary">
