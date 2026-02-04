@@ -81,7 +81,16 @@ class NormalizerAgent:
         if not specs and not price:
             return {"normalized_specs": {}, "normalized_price": {}}
 
-        prompt = f"""Product: {title}
+        category_hint = ""
+        title_lower = title.lower()
+        if any(w in title_lower for w in ["phone", "smartphone", "iphone", "galaxy"]):
+            category_hint = "\nIMPORTANT: Ensure you extract and normalize these specific keys: ram, storage, battery, processor, display."
+        elif any(w in title_lower for w in ["laptop", "macbook", "notebook"]):
+            category_hint = "\nIMPORTANT: Ensure you extract and normalize these specific keys: ram, storage, processor, display, graphics."
+        elif any(w in title_lower for w in ["tv", "television", "smart tv"]):
+            category_hint = "\nIMPORTANT: Ensure you extract and normalize these specific keys: display_size, resolution, refresh_rate, smart_features."
+
+        prompt = f"""Product: {title}{category_hint}
 
 Raw Specifications:
 {json.dumps(specs, indent=2)}
