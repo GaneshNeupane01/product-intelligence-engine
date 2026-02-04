@@ -144,14 +144,22 @@ def execute_search(query: str, num_sites: int = 5) -> SearchQuery:
                     except Exception as e:
                         logger.error(f"Parse/normalize failed for {futures[future]}: {e}")
 
+        # Pre-Comparison Filter: Drop poorly parsed products with 0 price to avoid AI confusion
+        # (We explicitly do NOT drop out-of-stock items, allowing the AI to notify the user they exist but are unavailable)
+        valid_normalized_products = []
+        for p in normalized_products:
+            price_amount = p.get("normalized_price", {}).get("amount")
+            if price_amount and float(price_amount) > 0:
+                valid_normalized_products.append(p)
+
         # Phase 4: Compare (query-level, not per-result)
-        if len(normalized_products) >= 1:
+        if len(valid_normalized_products) >= 1:
             search_query.status = "comparing"
             search_query.save(update_fields=["status"])
 
             try:
                 comparator = ComparisonEngine()
-                comparison_data = comparator.compare(normalized_products)
+                comparison_data = comparator.compare(valid_normalized_products)
                 ComparisonResult.objects.create(
                     search_query=search_query,
                     data=comparison_data,
