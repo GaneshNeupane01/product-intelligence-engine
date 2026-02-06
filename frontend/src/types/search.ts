@@ -123,6 +123,7 @@ export interface SearchQuery {
 export interface SearchRequest {
     query: string;
     num_sites: number;
+    persona?: string;
 }
 
 /* Pipeline step for loading visualization */

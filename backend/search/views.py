@@ -28,8 +28,9 @@ def search_products(request):
 
     query = serializer.validated_data["query"]
     num_sites = serializer.validated_data["num_sites"]
+    persona = serializer.validated_data.get("persona", "General")
 
-    search_query = execute_search(query=query, num_sites=num_sites)
+    search_query = execute_search(query=query, num_sites=num_sites, persona=persona)
 
     result_serializer = SearchQuerySerializer(search_query)
     http_status = (

@@ -85,3 +85,4 @@ class SearchRequestSerializer(serializers.Serializer):
     """Validates incoming search requests."""
     query = serializers.CharField(max_length=500, required=True)
     num_sites = serializers.IntegerField(min_value=1, max_value=10, default=5)
+    persona = serializers.CharField(max_length=100, default="General")

@@ -15,7 +15,7 @@ export default function HomePage() {
   const [searchData, setSearchData] = useState<SearchQuery | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSearch = async (query: string, numSites: number) => {
+  const handleSearch = async (query: string, numSites: number, persona: string) => {
     setError(null);
     setSearchData(null);
     setPipelineStep("submitting");
@@ -24,7 +24,7 @@ export default function HomePage() {
     setTimeout(() => setPipelineStep("searching"), 300);
 
     try {
-      const data = await searchProducts({ query, num_sites: numSites });
+      const data = await searchProducts({ query, num_sites: numSites, persona });
 
       if (data.status === "failed") {
         setPipelineStep("failed");

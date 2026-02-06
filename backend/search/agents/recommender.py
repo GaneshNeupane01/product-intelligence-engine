@@ -60,9 +60,9 @@ class RecommendationAgent:
     def __init__(self):
         self.llm = get_llm_provider()
 
-    def recommend(self, comparison_data: Dict[str, Any]) -> Dict[str, Any]:
+    def recommend(self, comparison_data: Dict[str, Any], persona: str = "General") -> Dict[str, Any]:
         """
-        Generates recommendations from the comparison matrix.
+        Generates recommendations from the comparison matrix tailored to a true buyer persona.
         """
         if not comparison_data or comparison_data.get("error"):
             return {
@@ -72,7 +72,10 @@ class RecommendationAgent:
                 "verdict": "Please try again with a different search query.",
             }
 
-        prompt = f"Comparison Matrix:\n{json.dumps(comparison_data, indent=2, default=str)}"
+        prompt = (
+            f"Generate recommendations tailored strictly for a [{persona}] buyer.\n\n"
+            f"Comparison Matrix:\n{json.dumps(comparison_data, indent=2, default=str)}"
+        )
 
         try:
             logger.info("RecommendationAgent generating insights")

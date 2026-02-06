@@ -60,7 +60,7 @@ def _parse_and_normalize(parser_agent, normalizer_agent, search_result, raw_md, 
     return None
 
 
-def execute_search(query: str, num_sites: int = 5) -> SearchQuery:
+def execute_search(query: str, num_sites: int = 5, persona: str = "General") -> SearchQuery:
     """
     Run the full search + intelligence pipeline.
     """
@@ -171,7 +171,7 @@ def execute_search(query: str, num_sites: int = 5) -> SearchQuery:
 
                 try:
                     recommender = RecommendationAgent()
-                    recommendation_data = recommender.recommend(comparison_data)
+                    recommendation_data = recommender.recommend(comparison_data, persona=persona)
                     Recommendation.objects.create(
                         search_query=search_query,
                         data=recommendation_data,
