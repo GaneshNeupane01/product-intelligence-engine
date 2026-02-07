@@ -14,10 +14,11 @@ import type { SearchResult as SearchResultType } from "@/types/search";
 interface SiteCardProps {
     result: SearchResultType;
     index: number;
+    autoExpand?: boolean;
 }
 
-export default function SiteCard({ result, index }: SiteCardProps) {
-    const [isExpanded, setIsExpanded] = useState(false);
+export default function SiteCard({ result, index, autoExpand = false }: SiteCardProps) {
+    const [isExpanded, setIsExpanded] = useState(autoExpand);
     const markdown = result.raw_markdown;
     const contentPreview = markdown?.content
         ? markdown.content.slice(0, 300) + (markdown.content.length > 300 ? "…" : "")

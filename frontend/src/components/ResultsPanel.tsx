@@ -2,9 +2,7 @@
 
 import { motion } from "framer-motion";
 import type { SearchQuery } from "@/types/search";
-import SiteCard from "./SiteCard";
-import ComparisonPanel from "./ComparisonPanel";
-import RecommendationPanel from "./RecommendationPanel";
+import ComparisonDashboard from "./ComparisonDashboard";
 import { Clock, Globe, Layers } from "lucide-react";
 
 interface ResultsPanelProps {
@@ -50,21 +48,8 @@ export default function ResultsPanel({ searchData }: ResultsPanelProps) {
                 </div>
             </div>
 
-            {/* AI Insights & Comparison (Phases 4 & 5) */}
-            {searchData.recommendation && (
-                <RecommendationPanel recommendation={searchData.recommendation} />
-            )}
-
-            {searchData.comparison && (
-                <ComparisonPanel comparison={searchData.comparison} />
-            )}
-
-            {/* Site Cards */}
-            <div className="results-grid">
-                {searchData.results.map((result, idx) => (
-                    <SiteCard key={result.id} result={result} index={idx} />
-                ))}
-            </div>
+            {/* Unified Comparison Dashboard (Phase 6) */}
+            <ComparisonDashboard searchData={searchData} />
 
             {searchData.results.length === 0 && (
                 <div className="results-empty">
