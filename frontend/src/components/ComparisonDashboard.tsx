@@ -9,6 +9,7 @@ import RecommendationPanel from "./RecommendationPanel";
 import ComparisonPanel from "./ComparisonPanel";
 import SpecDiffTable from "./SpecDiffTable";
 import SiteCard from "./SiteCard";
+import SearchTimeline from "./SearchTimeline";
 
 interface ComparisonDashboardProps {
     searchData: SearchQuery;
@@ -26,8 +27,8 @@ export default function ComparisonDashboard({ searchData }: ComparisonDashboardP
                 <button
                     onClick={() => setActiveTab("overview")}
                     className={`flex items-center gap-2 px-6 py-2.5 rounded-full transition-all text-sm font-medium ${activeTab === "overview"
-                            ? "bg-[var(--accent-primary)] text-white shadow-[0_0_20px_var(--accent-glow)]"
-                            : "bg-[#1a1a24] text-[#a0a0b5] border border-[#2a2a3a] hover:text-white"
+                        ? "bg-[var(--accent-primary)] text-white shadow-[0_0_20px_var(--accent-glow)]"
+                        : "bg-[#1a1a24] text-[#a0a0b5] border border-[#2a2a3a] hover:text-white"
                         }`}
                 >
                     <LayoutGrid size={16} /> Overview
@@ -35,8 +36,8 @@ export default function ComparisonDashboard({ searchData }: ComparisonDashboardP
                 <button
                     onClick={() => setActiveTab("specs")}
                     className={`flex items-center gap-2 px-6 py-2.5 rounded-full transition-all text-sm font-medium ${activeTab === "specs"
-                            ? "bg-[var(--accent-primary)] text-white shadow-[0_0_20px_var(--accent-glow)]"
-                            : "bg-[#1a1a24] text-[#a0a0b5] border border-[#2a2a3a] hover:text-white"
+                        ? "bg-[var(--accent-primary)] text-white shadow-[0_0_20px_var(--accent-glow)]"
+                        : "bg-[#1a1a24] text-[#a0a0b5] border border-[#2a2a3a] hover:text-white"
                         }`}
                 >
                     <ListTree size={16} /> Deep Dive Specs
@@ -44,8 +45,8 @@ export default function ComparisonDashboard({ searchData }: ComparisonDashboardP
                 <button
                     onClick={() => setActiveTab("dev")}
                     className={`flex items-center gap-2 px-6 py-2.5 rounded-full transition-all text-sm font-medium ${activeTab === "dev"
-                            ? "bg-[#6b7280] text-white shadow-[0_0_20px_rgba(107,114,128,0.3)]"
-                            : "bg-[#1a1a24] text-[#a0a0b5] border border-[#2a2a3a] hover:text-white"
+                        ? "bg-[#6b7280] text-white shadow-[0_0_20px_rgba(107,114,128,0.3)]"
+                        : "bg-[#1a1a24] text-[#a0a0b5] border border-[#2a2a3a] hover:text-white"
                         }`}
                 >
                     <Code2 size={16} /> Developer Mode
@@ -61,15 +62,22 @@ export default function ComparisonDashboard({ searchData }: ComparisonDashboardP
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.3 }}
+                        className="grid grid-cols-1 lg:grid-cols-4 gap-6"
                     >
-                        {searchData.recommendation && (
-                            <RecommendationPanel recommendation={searchData.recommendation} />
-                        )}
-                        {searchData.comparison && (
-                            <ComparisonPanel comparison={searchData.comparison} />
-                        )}
+                        <div className="lg:col-span-3 space-y-6">
+                            {searchData.recommendation && (
+                                <RecommendationPanel recommendation={searchData.recommendation} />
+                            )}
+                            {searchData.comparison && (
+                                <ComparisonPanel comparison={searchData.comparison} />
+                            )}
+                        </div>
 
-                        <div className="mt-8 text-center text-[var(--text-muted)] text-sm">
+                        <div className="lg:col-span-1">
+                            <SearchTimeline searchData={searchData} />
+                        </div>
+
+                        <div className="lg:col-span-4 mt-8 text-center text-[var(--text-muted)] text-sm">
                             Scroll down for individual site details, or use the tabs above.
                         </div>
                     </motion.div>
