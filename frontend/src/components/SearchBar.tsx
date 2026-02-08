@@ -65,7 +65,7 @@ export default function SearchBar({ onSearch, isLoading }: SearchBarProps) {
                 <div className="flex flex-wrap items-center justify-center gap-6 mt-4 opacity-90">
                     <div className="sites-selector" style={{ margin: 0, padding: 0 }}>
                         <Globe size={16} className="sites-icon" />
-                        <span className="sites-label">Websites to scan:</span>
+                        <span className="sites-label">Max websites to scan:</span>
                         <div className="sites-counter">
                             <button
                                 type="button"

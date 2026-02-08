@@ -54,7 +54,7 @@ class GeminiProvider(LLMProvider):
                 self.url,
                 headers={"Content-Type": "application/json"},
                 json=payload,
-                timeout=60
+                timeout=120
             )
             res.raise_for_status()
             data = res.json()

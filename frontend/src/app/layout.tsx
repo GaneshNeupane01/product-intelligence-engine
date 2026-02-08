@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   title: "Product Intelligence Engine — Smart Product Search",
   description:
     "AI-powered product search platform that crawls the web, extracts product data, and delivers structured intelligence.",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({

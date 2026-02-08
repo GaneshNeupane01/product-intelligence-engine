@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Cpu, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
+import Image from "next/image";
 
 import SearchBar from "@/components/SearchBar";
 import PipelineVisualizer from "@/components/PipelineVisualizer";
@@ -58,7 +59,7 @@ export default function HomePage() {
       <header className="app-header">
         <div className="app-logo">
           <div className="app-logo-icon">
-            <Cpu size={18} />
+            <Image src="/logo.png" alt="PI Logo" width={28} height={28} />
           </div>
           <span className="app-logo-text">Product Intelligence</span>
         </div>

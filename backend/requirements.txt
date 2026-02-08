@@ -1,0 +1,11 @@
+# Core
+Django==6.0.6
+djangorestframework==3.17.1
+django-cors-headers==4.9.0
+
+# Env & HTTP
+python-dotenv==1.2.2
+requests==2.34.2
+
+# Data modeling
+pydantic==2.13.4

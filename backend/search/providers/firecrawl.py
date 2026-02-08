@@ -66,7 +66,7 @@ class FirecrawlSearchProvider(SearchProvider):
                 FIRECRAWL_SCRAPE_URL,
                 headers=self.headers,
                 json=scrape_payload,
-                timeout=60,
+                timeout=120,
             )
             res.raise_for_status()
             data = res.json()
@@ -118,7 +118,7 @@ class FirecrawlSearchProvider(SearchProvider):
                 FIRECRAWL_SEARCH_URL,
                 headers=self.headers,
                 json=search_payload,
-                timeout=30,
+                timeout=60,
             )
             response.raise_for_status()
             search_data = response.json()
