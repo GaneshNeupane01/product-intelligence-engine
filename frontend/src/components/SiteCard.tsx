@@ -121,7 +121,7 @@ export default function SiteCard({ result, index, autoExpand = false }: SiteCard
                             {result.parsed_product && (
                                 <div style={{ flex: 1, minWidth: 0 }}>
                                     <div style={{ fontSize: "11px", color: "#10b981", marginBottom: "4px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Extracted Product Data</div>
-                                    <pre className="markdown-content" style={{ borderColor: "#059669" }}>
+                                    <pre className="markdown-content json-view" style={{ borderColor: "rgba(16, 185, 129, 0.3)" }}>
                                         {JSON.stringify(result.parsed_product.data, null, 2)}
                                     </pre>
                                 </div>
