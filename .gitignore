@@ -4,6 +4,7 @@ firecrawl.js
 test_fc.py
 backend/.env
 *.pyc
+*.sqlite3
 
 
 
